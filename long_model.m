@@ -1,4 +1,9 @@
-function A = long_model(data,dd,ref)
+function [A,B] = long_model(data,dd,ref)
+
+%reference conditions
+g=ref(1);
+theta_ref=ref(2);
+u_ref=ref(3);
 
 %aircraft data
 h=data(1);
@@ -17,10 +22,8 @@ X_q=dd(3,1); Z_q=dd(3,2); M_q=dd(3,3);
 X_wdot=dd(4,1); Z_wdot=dd(4,2); M_wdot=dd(4,3);
 X_e=dd(5,1); Z_e=dd(5,2); M_e=dd(5,3);
 
-%reference conditions
-g=ref(1)
-theta_ref=ref(2)
-u_ref=ref(3)
+X_p=0.3*m*g %(derivative w.r.t thrust input)
+
 
 %compute state matrix A
 A=zeros(4,4);
@@ -31,4 +34,11 @@ A(3,2)=inv(I_y)*(M_w+(M_wdot*Z_w*inv(m-Z_wdot)));
 A(3,3)=inv(I_y)*(M_q+(M_wdot*(Z_q+m*u_ref)*inv(m-Z_wdot)));
 A(3,4)=-M_wdot*m*g*sin(theta_ref)*inv(I_y*(m-Z_wdot));
 A(4,:)=[0, 0, 1, 0];
+
+%compute matrix B
+B=zeros(4,2);
+B(1,:)=inv(m)*[X_e, X_p];
+B(2,:)=inv(m-Z_wdot)*[Z_e, 0];
+B(3,:)=inv(I_y)*[M_e+M_wdot*Z_e*inv(m-Z_wdot), 0];
+B(4,:)=[0,0];
 end
