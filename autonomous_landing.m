@@ -1,12 +1,15 @@
+clc
+clear all
+close all
 
-%aircraft data:altitude, moment of inertia etc
-data=xlsread('boeing747_data.xlsx');
+% %aircraft data:altitude, moment of inertia etc
+ data=xlsread('boeing747_data.xlsx');
 
-%Dimensional derivatives case 1 Mach 0.2 
-dd=xlsread('dimensional_derivatives_case1');
+% %Dimensional derivatives case 1 Mach 0.2 
+ dd=xlsread('dimensional_derivatives_case1');
 
 %reference conditions [g theta_ref u_ref]
-ref=[32.2 0 data(3,1)]; %u_ref is the velocity mentioned in data file
+ref=[32.2 0 50]; %u_ref data(3,1)is the velocity mentioned in data file
 
 %Aircraft system X_dot=AX+Bu
 %states are {del_u w q del_theta]'
@@ -33,11 +36,11 @@ d2=h_ref;
 % D=[zeros(4,1);u_ref;0;d1-d2];
 
 %adaptive r(t)
-del_ws=-20;
-C=[tan(gsa) -1 0 0; 0 1 0 0];
+del_ws=50;
+C=[1 0 0 0; 0 1 0 0];
 A1_app=[A1 zeros(4,2); -C zeros(2,2)];
 B1_app =[B1; zeros(2,2)];
-D1=[zeros(4,1);-u_ref*tan(gsa); del_ws];
+D1=[zeros(4,1);45; del_ws]; %-u_ref*tan(gsa)
 
 B1_app(2,2)=0.1;
 disp('controlability matrix rank')
@@ -48,29 +51,31 @@ rank(P)
 %eigen structure
 %Two desired eigenvalues (dutch roll) are determined by desired damping ratio and
 %natural frequency zeta and omega_n respectively
-zeta1=0.2; 
+zeta1=0.1; 
 omega_n1=3; 
 lambda_d(1) = -zeta1*omega_n1 + j*omega_n1*sqrt(1-zeta1^2);
-lambda_d(2) = conj(lambda1_d);
-lambda_d(3) = -7 + j*0;
-lambda_d(4) = 0.1*real(lambda1_d);
-lambda_d(5) = 0.31*real(lambda1_d);
-lambda_d(6) = 0.41*real(lambda1_d);
+lambda_d(2) = conj(lambda_d(1));
+lambda_d(3) = -0.1+ j*0;
+lambda_d(4) = -2%0.1*real(lambda_d(3));
+lambda_d(5) = -3%0.2*real(lambda_d(3));
+lambda_d(6) = -4%0.3*real(lambda_d(3));
+
 
 
 % Extracting desired eigenvectors directly from the null-space. 
 for i=1:6
 mat(:,:,i) = [(lambda_d(i)*eye(6)-A1_app) B1_app];
 nullspace(:,:,i) = null(mat(:,:,i),'r');
-vu(:,i) = (1+rand(1))*nullspace(:,1,i)+(1+rand(1))*nullspace(:,2,i);
+vu(:,i) = 0.2*i*nullspace(:,1,i)+0.5*nullspace(:,2,i);
 V(:,i)=vu(1:6,i);
 U(:,i)=vu(7:8,i);
 end
 
 K = U*inv(V); %returns K as complex variable but with 0 imaginary part
+K=real(K);
 
 
 
-
-x0=[0 0 0 0 0.1 0.1];
-[t,x] = ode45('gsa_land',[0:0.02:100],x0,[],A1_app,B1_app,K,D1);%,alpha_T)
+x0=[0 0 0 0 0 0];
+[t,x] = ode45('gsa_land',[0:0.02:100],x0,[],A1_app,B1_app,K,D1)
+plot(t,x(:,2))
