@@ -19,7 +19,7 @@ ref=[32.2 0 50]; %u_ref data(3,1)is the velocity mentioned in data file
 gsa=3*pi/180; %glide slope angle
 rw_d0=30000;
 h_ref=1500;
-u_ref=data(3,1);
+u_ref=200 %data(3,1);
 
 %C matrices and d for reference tracking
 C1=[zeros(1,5) 1];
@@ -36,11 +36,11 @@ d2=h_ref;
 % D=[zeros(4,1);u_ref;0;d1-d2];
 
 %adaptive r(t)
-del_ws=250;
-C=[1 0 0 0; 0 1 0 0];
+del_ws=10;
+C=[tan(gsa) -1 0 0; 0 1 0 0];
 A1_app=[A1 zeros(4,2); -C zeros(2,2)];
 B1_app =[B1; zeros(2,2)];
-D1=[zeros(4,1);45; del_ws]; %-u_ref*tan(gsa)
+D1=[zeros(4,1);-u_ref*tan(gsa); del_ws]; %-u_ref*tan(gsa)
 
 B1_app(2,2)=0.1;
 disp('controlability matrix rank')
