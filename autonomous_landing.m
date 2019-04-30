@@ -36,7 +36,7 @@ d2=h_ref;
 % D=[zeros(4,1);u_ref;0;d1-d2];
 
 %adaptive r(t)
-del_ws=50;
+del_ws=250;
 C=[1 0 0 0; 0 1 0 0];
 A1_app=[A1 zeros(4,2); -C zeros(2,2)];
 B1_app =[B1; zeros(2,2)];
@@ -55,10 +55,10 @@ zeta1=0.1;
 omega_n1=3; 
 lambda_d(1) = -2+j*0.5%-zeta1*omega_n1 + j*omega_n1*sqrt(1-zeta1^2);
 lambda_d(2) = conj(lambda_d(1));
-lambda_d(3) = -0.1+ j*0;
-lambda_d(4) = -2.1%0.1*real(lambda_d(3));
-lambda_d(5) = -3%0.2*real(lambda_d(3));
-lambda_d(6) = -5%0.3*real(lambda_d(3));
+lambda_d(3) = -0.05+ j*0;
+lambda_d(4) = -2.9%0.1*real(lambda_d(3));
+lambda_d(5) = -3.5%0.2*real(lambda_d(3));
+lambda_d(6) = -4.5%0.3*real(lambda_d(3));
 
 
 
