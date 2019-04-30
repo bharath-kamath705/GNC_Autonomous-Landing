@@ -53,12 +53,12 @@ rank(P)
 %natural frequency zeta and omega_n respectively
 zeta1=0.1; 
 omega_n1=3; 
-lambda_d(1) = -zeta1*omega_n1 + j*omega_n1*sqrt(1-zeta1^2);
+lambda_d(1) = -2+j*0.5%-zeta1*omega_n1 + j*omega_n1*sqrt(1-zeta1^2);
 lambda_d(2) = conj(lambda_d(1));
 lambda_d(3) = -0.1+ j*0;
-lambda_d(4) = -2%0.1*real(lambda_d(3));
+lambda_d(4) = -2.1%0.1*real(lambda_d(3));
 lambda_d(5) = -3%0.2*real(lambda_d(3));
-lambda_d(6) = -4%0.3*real(lambda_d(3));
+lambda_d(6) = -5%0.3*real(lambda_d(3));
 
 
 
