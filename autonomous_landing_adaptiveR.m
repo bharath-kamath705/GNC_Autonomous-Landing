@@ -17,7 +17,7 @@ ref=[32.2 0 50]; %u_ref data(3,1)is the velocity mentioned in data file
 
 %landing parameters
 gsa=3*pi/180; %glide slope angle
-rw_d0=30000;
+s_ref=30000;
 h_ref=1500;
 u_ref=200 %data(3,1);
 
@@ -64,7 +64,42 @@ K=real(K);
 
 
 
-x0=[0 0 0 0 0 0];
-[t,x] = ode45('gsa_land',[0:0.02:100],x0,[],A1_app,B1_app,K,D1);
-plot(t,x(:,2))
+% x0=[0 0 0 0 0 0 s_ref h_ref];
+% [t,x] = ode45('gsa_land_R',[0:0.02:100],x0,[],A1_app,B1_app,K,D1,u_ref);
+% plot(t,x(:,8))
 
+
+tol=0.1
+ti=0
+del_t=1
+t_tot=185
+n=t_tot/del_t
+tf=del_t
+X=zeros(1,8)
+T=0
+x0=[0 0 0 0 0 0 s_ref h_ref];
+for i=1:n
+    
+    [t,x] = ode45('gsa_land_R',[ti tf],x0,[],A1_app,B1_app,K,D1,u_ref);
+    
+    if x(end,8)>(x(end,7)*tan(gsa)+tol)
+        D1(end)=D1(end)-0.5;
+    elseif x(end,8)<(x(end,7)*tan(gsa)-tol)
+        D1(end)=D1(end)+0.5;
+    else
+        ;
+    end
+    
+    X=[X;x];
+    T=[T;t];
+    ti=tf
+    tf=tf+del_t;
+    x0=x(end,:);
+end
+
+plot(T(2:end),X(2:end,2))
+
+figure
+plot(X(2:end,7),X(2:end,8))
+hold on
+plot(X(2:end,7),tan(gsa)*X(2:end,7),'r')
