@@ -42,7 +42,7 @@ A1_app=[A1 zeros(4,2); -C zeros(2,2)];
 B1_app =[B1; zeros(2,2)];
 D1=[zeros(4,1);-u_ref*tan(gsa); del_ws]; %-u_ref*tan(gsa)
 
-B1_app(2,2)=0.1;
+B1_app(2,2)=0.2;
 disp('controlability matrix rank')
 P = [B1_app A1_app*B1_app A1_app^2*B1_app A1_app^3*B1_app A1_app^4*B1_app A1_app^5*B1_app ];
 rank(P)
@@ -78,4 +78,4 @@ K=real(K);
 
 x0=[0 0 0 0 0 0];
 [t,x] = ode45('gsa_land',[0:0.02:100],x0,[],A1_app,B1_app,K,D1)
-plot(t,x(:,2))
+plot(t,x(:,2))m
