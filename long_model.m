@@ -22,7 +22,7 @@ X_q=dd(3,1); Z_q=dd(3,2); M_q=dd(3,3);
 X_wdot=dd(4,1); Z_wdot=dd(4,2); M_wdot=dd(4,3);
 X_e=dd(5,1); Z_e=dd(5,2); M_e=dd(5,3);
 
-X_p=0.3*m*g %(derivative w.r.t thrust input)
+X_p=-0.3*m*g; %(derivative w.r.t thrust input)
 
 
 %compute state matrix A
