@@ -18,7 +18,7 @@ ref=[32.2 0 50]; %u_ref data(3,1)is the velocity mentioned in data file
 %landing parameters
 gsa=3*pi/180; %glide slope angle
 s_ref=30000;
-h_ref=1500;
+h_ref=2000;
 u_ref=200 %data(3,1);
 
 
@@ -41,39 +41,28 @@ rank(P)
 
 %------------eigen structure----------------------
 %desired eigen values
-zeta1=0.1; 
-omega_n1=3; 
-lambda_d(1) = -2+j*0.5;
-lambda_d(2) = conj(lambda_d(1));
-lambda_d(3) = -0.05+ j*0;
-lambda_d(4) = -2.9;
-lambda_d(5) = -3.5;
-lambda_d(6) = -4.5;
-
+lambda1_d=[-2+j*0.5 -2-j*0.5 -0.05+ j*0 -2.9 -3.5 -4.5]
 
 
 % Extracting desired eigenvectors directly from the null-space. 
 for i=1:6
-mat(:,:,i) = [(lambda_d(i)*eye(6)-A1_app) B1_app];
+mat(:,:,i) = [(lambda1_d(i)*eye(6)-A1_app) B1_app];
 nullspace(:,:,i) = null(mat(:,:,i),'r');
 vu(:,i) = 0.2*i*nullspace(:,1,i)+0.5*nullspace(:,2,i);
 V(:,i)=vu(1:6,i);
 U(:,i)=vu(7:8,i);
 end
 
-K = U*inv(V); %returns K as complex variable but with 0 imaginary part
-K=real(K);
+K1 = U*inv(V); %returns K as complex variable but with 0 imaginary part
+K1=real(K1);
 %-----------------------------------------------------------------------
 
-% x0=[0 0 0 0 0 0 s_ref h_ref];
-% [t,x] = ode45('gsa_land_R',[0:0.02:100],x0,[],A1_app,B1_app,K,D1,u_ref);
-% plot(t,x(:,8))
 
 %--------------- Simulation----------------------------------
 tol=80   %tolerance determines how close to gsa is acceptable
-del_ws=0.13 %change in reference input
+del_ws=0.1 %change in reference input
 del_t=1    %time step size
-t_tot=185  %total time of simulation
+t_tot=220 %total time of simulation
 n=t_tot/del_t
 
 ti=0
@@ -84,7 +73,7 @@ x0=[0 0 0 0 0 0 s_ref h_ref];
 
 for i=1:n
     
-    [t,x] = ode45('gsa_land_R',[ti tf],x0,[],A1_app,B1_app,K,D1,u_ref);
+    [t,x] = ode45('gsa_land_R',[ti tf],x0,[],A1_app,B1_app,K1,D1,u_ref);
     
     if x(end,8)>(x(end,7)*tan(gsa)+tol)
         D1(end)=D1(end)-del_ws;
@@ -128,7 +117,7 @@ grid,ylabel('\theta (rad)','FontSize',15),xlabel('t(s)')
 
 %plots of control input
 figure(3)
-u=-X(:,1:6)*K'
+u=-X(:,1:6)*K1'
 subplot(2,1,1),plot(T(2:end),u(2:end,1))
 grid,ylabel('\delta_e (rad)','FontSize',15),xlabel('t(s)')
 subplot(2,1,2),plot(T(2:end),u(2:end,2))
