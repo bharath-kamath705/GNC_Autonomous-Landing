@@ -67,16 +67,16 @@ K=real(K);
 % plot(t,x(:,8))
 
 %--------------- Simulation----------------------------------
-tol=0.1 %tolerance determines how close to gsa is acceptable
+tol=0.1    %tolerance determines how close to gsa is acceptable
 del_ws=0.5 %change in reference input
-del_t=1 %time step size
-t_tot=185 %total time of simulation
+del_t=1    %time step size
+t_tot=185  %total time of simulation
 n=t_tot/del_t
 
 ti=0
 tf=del_t
 X=zeros(1,8) %final states will be stored here
-T=0 %final time will be stored here
+T=0          %final time will be stored here
 x0=[0 0 0 0 0 0 s_ref h_ref];
 
 for i=1:n
@@ -103,8 +103,9 @@ end
 %first row should be ignored
 figure(1)
 hold on
-plot(X(2:end,7),X(2:end,8)) %plots flight path
-plot(X(2:end,7),tan(gsa)*X(2:end,7),'r') %plots desired glide slope
+%plot flight path,desired glide slope and runway start respectively
+plot(X(2:end,7),X(2:end,8))              
+plot(X(2:end,7),tan(gsa)*X(2:end,7),'r') 
 plot(X(2:end,7),zeros(size(X(2:end,7))),'k','LineWidth',2)
 plot(0,0,'.','MarkerSize',25)
 ylabel('h (ft)','FontSize',16),xlabel('s (ft)','FontSize',16)
@@ -122,4 +123,11 @@ subplot(4,1,4),plot(T(2:end),X(2:end,4))
 grid,ylabel('\theta (rad)','FontSize',15),xlabel('t(s)')
 
 %plots of control input
+figure(3)
+u=-X(:,1:6)*K'
+subplot(2,1,1),plot(T(2:end),u(2:end,1))
+grid,ylabel('\delta_e (rad)','FontSize',15),xlabel('t(s)')
+subplot(2,1,2),plot(T(2:end),u(2:end,2))
+grid,ylabel('\delta_p (lb)','FontSize',15),xlabel('t(s)')
+
 %subplot(2,3,5),plot(t2,u),grid,title('\delta_e','FontSize',16),xlabel('t(s)'),ylabel('rad','FontSize',16)
