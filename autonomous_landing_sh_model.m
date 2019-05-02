@@ -82,6 +82,6 @@ x0=[0 0 0 0 s_ref h_ref 0 ];
 plot(t,x(:,6))
 
 figure
-plot(x(:,5),x(:,6))
+plot(x(:,5),x(:,6),'.')
 hold on
 plot(x(:,5),tan(gsa)*x(:,5))

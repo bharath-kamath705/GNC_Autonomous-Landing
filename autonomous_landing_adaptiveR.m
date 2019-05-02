@@ -1,11 +1,11 @@
-clc
+ clc
 clear all
 close all
 
-% %aircraft data:altitude, moment of inertia etc
+%aircraft data:altitude, moment of inertia etc
  data=xlsread('boeing747_data.xlsx');
 
-% %Dimensional derivatives case 1 Mach 0.2 
+%Dimensional derivatives case 1 Mach 0.2 
  dd=xlsread('dimensional_derivatives_case1');
 
 %reference conditions [g theta_ref u_ref]
@@ -30,7 +30,10 @@ A1_app=[A1 zeros(4,2); -C zeros(2,2)];
 B1_app =[B1; zeros(2,2)];
 D1=[zeros(4,1);-u_ref*tan(gsa); ws]; %-u_ref*tan(gsa)
 
+%assume arbitrary values for derivative of Z wrt thrust
 B1_app(2,2)=0.2;
+
+%check controllability
 disp('controlability matrix rank')
 P = [B1_app A1_app*B1_app A1_app^2*B1_app A1_app^3*B1_app A1_app^4*B1_app A1_app^5*B1_app ];
 rank(P)
@@ -67,8 +70,8 @@ K=real(K);
 % plot(t,x(:,8))
 
 %--------------- Simulation----------------------------------
-tol=0.1    %tolerance determines how close to gsa is acceptable
-del_ws=0.5 %change in reference input
+tol=80   %tolerance determines how close to gsa is acceptable
+del_ws=0.13 %change in reference input
 del_t=1    %time step size
 t_tot=185  %total time of simulation
 n=t_tot/del_t
@@ -109,6 +112,7 @@ plot(X(2:end,7),tan(gsa)*X(2:end,7),'r')
 plot(X(2:end,7),zeros(size(X(2:end,7))),'k','LineWidth',2)
 plot(0,0,'.','MarkerSize',25)
 ylabel('h (ft)','FontSize',16),xlabel('s (ft)','FontSize',16)
+legend({'Flight path','Desired path','Runway','Runway start'},'FontSize',16,'Location','North')
 
 
 %plot of primary states
@@ -130,4 +134,4 @@ grid,ylabel('\delta_e (rad)','FontSize',15),xlabel('t(s)')
 subplot(2,1,2),plot(T(2:end),u(2:end,2))
 grid,ylabel('\delta_p (lb)','FontSize',15),xlabel('t(s)')
 
-%subplot(2,3,5),plot(t2,u),grid,title('\delta_e','FontSize',16),xlabel('t(s)'),ylabel('rad','FontSize',16)
+
